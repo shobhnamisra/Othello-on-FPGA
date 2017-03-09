@@ -1,0 +1,57 @@
+----------------------------------
+--		Library Declaration 	--
+----------------------------------
+-- Like any other programming language, we should declare libraries
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+----------------------------------
+--		Entity Declaration 		--
+----------------------------------
+-- Here we specify all input/output ports
+
+entity Keypad_Input is
+	Port(
+		--clk_50mhz : in std_logic;
+		data_in1: in std_logic;
+		enable: in std_logic;
+		green_led : out std_logic;
+	);
+end entity;
+
+----------------------------------
+--	Architecture Declaration 	--
+----------------------------------
+--	here we put the description code of the design
+
+architecture behave of Keypad_Input is
+
+-- signal declaration
+
+--signal clk_1hz : std_logic ;
+--signal scaler : integer range 0 to 25000000 ;
+signal LED  : std_logic ;
+
+begin
+
+-- this process is used to scale down the 50mhz frequency
+-- In reality, clk_1hz is not periodic but i used it to get 2 clock cycle by second ( 2 rising edge ).
+-- 50 mhz means 50 000 000 cycle in one second : 
+-- by using the scaler , i will have 2 cycle by second so that led will be on 1/2 s and off 1/2 s
+ 
+-- blinking LED process : led turn on and off	
+	data_transfer : process (enable)
+	begin
+		if (enable = '1') then 
+			LED <= data_in1;
+		else 
+			LED <= 0 ;
+		end if ;
+	end process data_transfer;
+
+	green_led <= LED;
+	end behave;
