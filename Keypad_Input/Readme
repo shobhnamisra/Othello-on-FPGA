@@ -1,0 +1,1 @@
+This is the code written for testing the keypad with the FPGA. When one input is pressed, two LEDs should glow at a time.
