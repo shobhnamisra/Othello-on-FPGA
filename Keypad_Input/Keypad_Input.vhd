@@ -16,10 +16,10 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity Keypad_Input is
 	Port(
-		data_in1: in std_logic;
-		data_in2: in std_logic;
-		data_in3: in std_logic;
-		data_in4: in std_logic;
+		data_in1: out std_logic;
+		data_in2: out std_logic;
+		data_in3: out std_logic;
+		data_in4: out std_logic;
 		data_in5: in std_logic;
 		data_in6: in std_logic;
 		data_in7: in std_logic;
@@ -58,48 +58,59 @@ begin
 
  
 -- data transfer process : data is written 
-	data_transfer : process (enable)
+	data_transfer : process 
 	begin
-		if (enable = '1') then 
-			LED1 <= data_in1;
-		else 
-			LED1 <= '0' ;
-		end if ;
-		if (enable = '1') then 
-			LED2 <= data_in2;
-		else 
-			LED2 <= '0' ;
-		end if ;
-		if (enable = '1') then 
-			LED3 <= data_in3;
-		else 
-			LED3 <= '0' ;
-		end if ;
-		if (enable = '1') then 
-			LED4 <= data_in4;
-		else 
-			LED4 <= '0' ;
-		end if ;
-		if (enable = '1') then 
+	
+		--if (enable = '1') then 
+			data_in1 <= '1';		-- put first input pin to 1 and check for the 5,6,7 and 8 pins
+			LED1 <= '1';
+			--wait for 100000000 ns;
 			LED5 <= data_in5;
-		else 
-			LED5 <= '0' ;
-		end if ;
-		if (enable = '1') then 
+			--wait for 100000000 ns;
 			LED6 <= data_in6;
-		else 
-			LED6 <= '0' ;
-		end if ;
-		if (enable = '1') then 
+			--wait for 100000000 ns;
 			LED7 <= data_in7;
-		else 
-			LED7 <= '0' ;
-		end if ;
-		if (enable = '1') then 
+			--wait for 100000000 ns;
 			LED8 <= data_in8;
-		else 
-			LED8 <= '0' ;
-		end if ;
+			--wait for 100000000 ns;
+			
+			data_in2 <= '1';		-- -- put second input pin to 1 and check for the 5,6,7 and 8 pins
+			LED2 <= '1';
+			--wait for 100000000 ns;
+			LED5 <= data_in5;
+			--wait for 100000000 ns;
+			LED6 <= data_in6;
+			--wait for 100000000 ns;
+			LED7 <= data_in7;
+			--wait for 100000000 ns;
+			LED8 <= data_in8;
+			--wait for 100000000 ns;
+			
+			data_in3 <= '1';		-- put third pin to 1 and check for the 5,6,7 and 8 pins
+			LED3 <= '1';
+			--wait for 100000000 ns;
+			LED5 <= data_in5;
+			--wait for 100000000 ns;
+			LED6 <= data_in6;
+			--wait for 100000000 ns;
+			LED7 <= data_in7;
+			--wait for 100000000 ns;
+			LED8 <= data_in8;
+			--wait for 100000000 ns;
+			
+			data_in4 <= '1';		-- put fourth input pin to 1 and check for the 5,6,7 and 8 pins
+			LED4 <= '1';
+			--wait for 100000000 ns;
+			LED5 <= data_in5;
+			--wait for 100000000 ns;
+			LED6 <= data_in6;
+			--wait for 100000000 ns;
+			LED7 <= data_in7;
+			--wait for 100000000 ns;
+			LED8 <= data_in8;
+			--wait for 100000000 ns;
+			
+		   --wait;
 	end process data_transfer;
 
 	green_led1 <= LED1;
