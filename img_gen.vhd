@@ -18,18 +18,18 @@ entity img_gen is
 architecture behavioral of img_gen is
    
 -- grid
-constant grid_t:integer:=1; --grid line thickness
-constant grid_b:integer:=1; --grid begins from
-constant grid_e:integer:=46; --end of grid
+constant grid_t:integer range 0 to 650:=10; --grid line thickness
+constant grid_b:integer range 0 to 650:=10; --grid begins from
+constant grid_e:integer range 0 to 650:=460; --end of grid
 signal grid_on:std_logic;
 signal rgb_grid:std_logic_vector(2 downto 0);
 
 
 --box
-constant size:integer:=10;--size of box
+constant size:integer range 0 to 200:=100;--size of box
 signal box_on:std_logic;
 signal rgb_box:std_logic_vector(2 downto 0);
-variable box_x,box_y:integer:=1;
+
 
 
 --x,y pixel cursor
@@ -42,61 +42,67 @@ signal vdbt:std_logic_vector(2 downto 0);
 signal rgb_reg,rgb_next:std_logic_vector(2 downto 0);
 
 begin
-
 --x,y pixel cursor
 x <=conv_integer(x_control);
 y <=conv_integer(y_control);
 
 --grid object
-process(grid_on)
-variable grid_d:integer:=1;
+process(grid_on,x,y,rgb_grid)
+
 begin 
-while (grid_d<=46) loop
-   if( x>grid_b and x<grid_e and y>grid_d and y<(grid_d+grid_t) and y>grid_b and y<grid_e and x>grid_d and x<(grid_d+grid_t)) then
+
+   if( (x>grid_b and x<grid_e and ((y>1 and y<(1+grid_t)) or (y>120 and y<(120+grid_t)) or (y>230 and y<(230+grid_t))
+	    or (y>340 and y<(340+grid_t)) or (y>450 and y<(450+grid_t)))) or
+	    (y>grid_b and y<grid_e and ((x>1 and x<(1+grid_t)) or (x>120 and x<(120+grid_t)) or (x>230 and x<(230+grid_t))
+	    or (x>340 and x<(340+grid_t)) or (x>450 and x<(450+grid_t)))) 
+	     ) then
 	grid_on<='1';
 	else grid_on<='0';
 	end if;
-	grid_d:=grid_d+11;
-end loop;
+
+
 rgb_grid<="000";--black
 end process;
 
 --user display
 process(addr, user, clk)
+variable box_x,box_y:integer range 0 to 650:=1;
   begin
+  
+  
   if(we='0' and oe='1') then
     if clk'event and clk='1' then
-	   if(NOT addr="0000") then box_x:=2; box_y:=2;
+	   if(NOT addr="0000") then box_x:=20; box_y:=20;
 		end if;
-		if(NOT addr="0001") then box_x:=13; box_y:=2;
+		if(NOT addr="0001") then box_x:=130; box_y:=20;
 		end if;
-		if(NOT addr="0010") then box_x:=24; box_y:=2;
+		if(NOT addr="0010") then box_x:=240; box_y:=20;
 		end if;
-		if(NOT addr="0011") then box_x:=35; box_y:=2;
+		if(NOT addr="0011") then box_x:=350; box_y:=20;
 		end if;
-		if(NOT addr="0100") then box_x:=2; box_y:=13;
+		if(NOT addr="0100") then box_x:=20; box_y:=130;
 		end if;
-		if(NOT addr="0101") then box_x:=13; box_y:=13;
+		if(NOT addr="0101") then box_x:=130; box_y:=130;
 		end if;
-		if(NOT addr="0110") then box_x:=24; box_y:=13;
+		if(NOT addr="0110") then box_x:=240; box_y:=130;
 		end if;
-		if(NOT addr="0111") then box_x:=35; box_y:=13;
+		if(NOT addr="0111") then box_x:=350; box_y:=130;
 		end if;
-		if(NOT addr="1000") then box_x:=2; box_y:=24;
+		if(NOT addr="1000") then box_x:=20; box_y:=240;
 		end if;
-      if(NOT addr="1001") then box_x:=13; box_y:=24;
+      if(NOT addr="1001") then box_x:=130; box_y:=240;
 		end if;
-		if(NOT addr="1010") then box_x:=24; box_y:=24;
+		if(NOT addr="1010") then box_x:=240; box_y:=240;
 		end if;
-		if(NOT addr="1011") then box_x:=35; box_y:=24;
+		if(NOT addr="1011") then box_x:=350; box_y:=240;
 		end if;
-		if(NOT addr="1100") then box_x:=2; box_y:=35;
+		if(NOT addr="1100") then box_x:=20; box_y:=350;
 		end if;
-		if(NOT addr="1101") then box_x:=13; box_y:=35;
+		if(NOT addr="1101") then box_x:=130; box_y:=350;
 		end if;
-		if(NOT addr="1110") then box_x:=24; box_y:=35;
+		if(NOT addr="1110") then box_x:=240; box_y:=350;
 		end if;
-		if(NOT addr="1111") then box_x:=35; box_y:=35;
+		if(NOT addr="1111") then box_x:=350; box_y:=350;
 		end if;
 		
 		if(x>box_x and x<(box_x+size) and y>box_y and y<(box_y+size)) then
@@ -126,7 +132,7 @@ end process;
 
 --mux
 vdbt<=video_on & grid_on & box_on; 
-  rgb_next <= "010" when vdbt="100" else --Background of the screen is red 
+  rgb_next <= "010" when vdbt="100" else --Background of the screen is green 
               rgb_grid when vdbt="110" else
               rgb_grid when vdbt="111" else
 	           rgb_box when vdbt="101" else 

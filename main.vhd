@@ -132,7 +132,7 @@ BEGIN
 							GAME_NEXT <= reset_all;
 							
 						ELSIF(button = '1') THEN
-							tempAddr <= NOT baddr; --store the pushed address
+							tempAddr <= baddr; --store the pushed address
 							GAME_NEXT <= check_empty; --check the address once read
 							SRAM_NEXT <= r; --read the pushed address from SRAM
 							
