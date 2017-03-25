@@ -70,7 +70,7 @@ variable box_x,box_y:integer range 0 to 650:=1;
   begin
   
   
-  if(we='0' and oe='1') then
+  if(we='1' and oe='0') then
     if clk'event and clk='1' then
 	   if(NOT addr="0000") then box_x:=20; box_y:=20;
 		end if;
