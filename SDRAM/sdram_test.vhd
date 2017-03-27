@@ -4,44 +4,48 @@ use ieee.std_logic_unsigned.all;
 
 entity sdram_test is
   port(
-		CLOCK_50 : in std_logic;
-   -- Host side
-		clk_100m0_i : in std_logic; -- Master clock
-		--reset_i     : in std_logic; -- Reset, active high
-		--refresh  : in std_logic; -- Initiate a refresh cycle, active high
-		--rw        : in std_logic; -- Initiate a read or write operation, active high
-		--we        : in std_logic; -- Write enable, active low
-		--addr_i      : in std_logic_vector(23 downto 0); -- Address from host to SDRAM
-		--data_i      : in std_logic_vector(15 downto 0); -- Data from host to SDRAM
-		--ube        : in std_logic; -- Data upper byte enable, active low
-		--lbe        : in std_logic; -- Data lower byte enable, active low
-		ready       : out std_logic; -- Set to '1' when the memory is ready
-		done     : out std_logic; -- Read, write, or refresh, operation is done
-		data_o      : out std_logic_vector(15 downto 0) -- Data from SDRAM to host
+    CLOCK_50      : IN STD_LOGIC;
    
+   -- Signals to/from the SDRAM chip
+   DRAM_ADDR   : OUT   STD_LOGIC_VECTOR (12 downto 0);
+   DRAM_BA      : OUT   STD_LOGIC_VECTOR (1 downto 0);
+   DRAM_CAS_N   : OUT   STD_LOGIC;
+   DRAM_CKE      : OUT   STD_LOGIC;
+   DRAM_CLK      : OUT   STD_LOGIC;
+   DRAM_CS_N   : OUT   STD_LOGIC;
+   DRAM_DQ      : INOUT STD_LOGIC_VECTOR(15 downto 0);
+   DRAM_DQM      : OUT   STD_LOGIC_VECTOR(1 downto 0);
+   DRAM_RAS_N   : OUT   STD_LOGIC;
+   DRAM_WE_N    : OUT   STD_LOGIC;
    
+   --- Inputs from rest of the system
+
+   data_out      : OUT     STD_LOGIC_VECTOR (15 downto 0);
+   data_out_valid : OUT     STD_LOGIC
+  
 	);
 
 end entity;
 
 architecture behavioral of sdram_test is
 
-component sdram_controller_whatever 
-  Port ( -- Host side
-		clk_100m0_i : in std_logic; -- Master clock
-		reset_i     : in std_logic; -- Reset, active high
-		refresh_i   : in std_logic; -- Initiate a refresh cycle, active high
-		rw_i        : in std_logic; -- Initiate a read or write operation, active high
-		we_i        : in std_logic; -- Write enable, active low
-		addr_i      : in std_logic_vector(23 downto 0); -- Address from host to SDRAM
-		data_i      : in std_logic_vector(15 downto 0); -- Data from host to SDRAM
-		ub_i        : in std_logic; -- Data upper byte enable, active low
-		lb_i        : in std_logic; -- Data lower byte enable, active low
-		ready_o     : out std_logic; -- Set to '1' when the memory is ready
-		done_o      : out std_logic; -- Read, write, or refresh, operation is done
-		data_o      : out std_logic_vector(15 downto 0); -- Data from SDRAM to host
-   
-  -- SDRAM side
+component sdram_controller 
+  port(
+      -- Host side
+      clk_100m0_i    : in std_logic;            -- Master clock
+      reset_i        : in std_logic := '0';     -- Reset, active high
+      refresh_i      : in std_logic := '0';     -- Initiate a refresh cycle, active high
+      rw_i           : in std_logic := '0';     -- Initiate a read or write operation, active high
+      we_i           : in std_logic := '0';     -- Write enable, active low
+      addr_i         : in std_logic_vector(23 downto 0) := (others => '0');   -- Address from host to SDRAM
+      data_i         : in std_logic_vector(15 downto 0) := (others => '0');   -- Data from host to SDRAM
+      ub_i           : in std_logic;            -- Data upper byte enable, active low
+      lb_i           : in std_logic;            -- Data lower byte enable, active low
+      ready_o        : out std_logic := '0';    -- Set to '1' when the memory is ready
+      done_o         : out std_logic := '0';    -- Read, write, or refresh, operation is done
+      data_o         : out std_logic_vector(15 downto 0);   -- Data from SDRAM to host
+ 
+      -- SDRAM side
       sdCke_o        : out std_logic;           -- Clock-enable to SDRAM
       sdCe_bo        : out std_logic;           -- Chip-select to SDRAM
       sdRas_bo       : out std_logic;           -- SDRAM row address strobe
@@ -52,7 +56,7 @@ component sdram_controller_whatever
       sdData_io      : inout std_logic_vector(15 downto 0); -- Data to/from SDRAM
       sdDqmh_o       : out std_logic;           -- Enable upper-byte of SDRAM databus if true
       sdDqml_o       : out std_logic            -- Enable lower-byte of SDRAM databus if true
-		);
+   );
 end component;
 
 component sdram_clk_gen
@@ -67,47 +71,51 @@ end component;
  signal  address:STD_LOGIC_VECTOR (23 downto 0);
  --signal  req_read:STD_LOGIC;
  signal  req_write:STD_LOGIC;
+ signal req:std_logic;
  signal  data_in:STD_LOGIC_VECTOR (15 downto 0);
  signal clk : std_logic;
- signal we : std_logic;
- signal rw : std_logic;
- signal ube : std_logic;
- signal lbe : std_logic;
- signal refresh : std_logic;
+ signal dqm : std_logic_vector(1 downto 0);
  
  begin 
  
  clkmap : sdram_clk_gen
   PORT MAP(inclk0=>CLOCK_50, c0=>clk);
   
- U: sdram_controller_whatever
+ U: sdram_controller
  PORT MAP (
    clk_100m0_i=>clk,
+	sdaddr_o=>DRAM_ADDR,
+	sdBs_o=>DRAM_BA,
+	sdCas_bo=>DRAM_CAS_N,
+	sdCke_o=>DRAM_CKE,
+	sdCe_bo=>DRAM_CS_N,
+	sdData_io=>DRAM_DQ,
+	sdDqmh_o=>dqm(1),
+	sdDqml_o=>dqm(0),
+	sdRas_bo=>DRAM_RAS_N,
+	sdWe_bo=>DRAM_WE_N,
 	addr_i=>address,
-	reset_i=>'0',
-	rw_i=>rw,
-	data_i=>data_in,
-	done_o=>done,
-	data_o=>data_o,
-	ready_o=>ready,
-	ub_i=>ube,
-	lb_i=>lbe,
-	refresh_i=>refresh,
-	we_i=>we
+   data_i=>data_in,
+	done_o => data_out_valid,
+	data_o=>data_out,
+	rw_i=>req,
+	we_i=>req_write,
+	ub_i=>'1',
+	lb_i=>'0'
 	);
 	
-process
+DRAM_DQM<=dqm;
+DRAM_CLK<=clk;
+	
+process(CLOCK_50)
  begin
-  rw<='1';
-  we<='0';
-  ube<='1';
-  lbe<='0';
+  req<='1';
+  req_write<='1';
   address<="000000000000000000000001";
-  data_in<="0000000000000001";
-  refresh<='0';
-  we<='1';
-  --done<='1';
-  --address<="000000000000000000000001";
+  data_in<=x"0003";
+  req_write<='0';
+  req<='1';
+  address<="000000000000000000000001";
  
  end process;
  
