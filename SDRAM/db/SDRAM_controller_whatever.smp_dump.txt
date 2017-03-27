@@ -1,0 +1,16 @@
+
+State Machine - |sdram_controller_whatever|state_r
+Name state_r.ST_PRECHARGE state_r.ST_RAS2 state_r.ST_RAS1 state_r.ST_RW state_r.ST_RCD state_r.ST_ACTIVATE state_r.ST_REFRESH state_r.ST_IDLE state_r.ST_INIT_REFRESH2 state_r.ST_INIT_MODE state_r.ST_INIT_REFRESH1 state_r.ST_INIT_PRECHARGE state_r.ST_INIT_WAIT 
+state_r.ST_INIT_WAIT 0 0 0 0 0 0 0 0 0 0 0 0 0 
+state_r.ST_INIT_PRECHARGE 0 0 0 0 0 0 0 0 0 0 0 1 1 
+state_r.ST_INIT_REFRESH1 0 0 0 0 0 0 0 0 0 0 1 0 1 
+state_r.ST_INIT_MODE 0 0 0 0 0 0 0 0 0 1 0 0 1 
+state_r.ST_INIT_REFRESH2 0 0 0 0 0 0 0 0 1 0 0 0 1 
+state_r.ST_IDLE 0 0 0 0 0 0 0 1 0 0 0 0 1 
+state_r.ST_REFRESH 0 0 0 0 0 0 1 0 0 0 0 0 1 
+state_r.ST_ACTIVATE 0 0 0 0 0 1 0 0 0 0 0 0 1 
+state_r.ST_RCD 0 0 0 0 1 0 0 0 0 0 0 0 1 
+state_r.ST_RW 0 0 0 1 0 0 0 0 0 0 0 0 1 
+state_r.ST_RAS1 0 0 1 0 0 0 0 0 0 0 0 0 1 
+state_r.ST_RAS2 0 1 0 0 0 0 0 0 0 0 0 0 1 
+state_r.ST_PRECHARGE 1 0 0 0 0 0 0 0 0 0 0 0 1 
