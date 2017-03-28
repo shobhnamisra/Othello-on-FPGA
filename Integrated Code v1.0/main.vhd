@@ -16,8 +16,10 @@ ENTITY main IS
 				oe				: OUT STD_LOGIC := '1'; --Output enable for sram
 				we				: OUT STD_LOGIC := '1'; --Write enable for sram and latches
 				raddr			: OUT STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000"; -- Address pins to latch decoders and sram
-				data 			: INOUT STD_LOGIC_VECTOR(1 DOWNTO 0) := (OTHERS => 'Z') --This is the bidirectional data bus to/from SRAM
-				);
+				--data 			: INOUT STD_LOGIC_VECTOR(1 DOWNTO 0) := (OTHERS => 'Z') --This is the bidirectional data bus to/from SRAM
+				datai			: OUT STD_LOGIC_VECTOR(1 DOWNTO 0) := (OTHERS => 'Z');
+				datao			: IN STD_LOGIC_VECTOR(1 DOWNTO 0)
+		);
 				
 				
 END main;
@@ -286,7 +288,7 @@ BEGIN
 					we <= '1'; --turn off write enable
 					oe <= '1'; --turn off read enable
 					raddr <= tempAddr; --send the address
-					data <= user; --send the data
+					datao <= user; --send the data
 					
 				--------------------------------------------------------------------------------
 				
@@ -296,7 +298,7 @@ BEGIN
 					we <= '0'; --turn on write enable
 					oe <= '1'; --turn off output enable
 					raddr <= tempAddr; --send address
-					data <= user; --send data
+					datai <= user; --send data
 					
 					SRAM_NEXT <= idle;
 				--------------------------------------------------------------------------------
@@ -307,7 +309,7 @@ BEGIN
 					we <= '1'; --turn off write enable
 					oe <= '0'; --turn on output enable 
 					raddr <= tempAddr; --send address
-					data <= (OTHERS => 'Z'); --stop forcing data so data may be read
+					datai <= (OTHERS => 'Z'); --stop forcing data so data may be read
 					
 					SRAM_NEXT <= r_end; --finish reading
 				--------------------------------------------------------------------------------	
@@ -315,11 +317,11 @@ BEGIN
 				
 				--R_END CASE--------------------------------------------------------------------
 				WHEN r_end =>
-					tempData <= data; --get data from bus
+					tempData <= datai; --get data from bus
 					we <= '1'; --turn off write enable
 					oe <= '0'; --turn on output enable
 					raddr <= tempAddr; --keep sending address
-					data <= (OTHERS => 'Z'); --stop forcing data
+					datai <= (OTHERS => 'Z'); --stop forcing data
 					
 					SRAM_NEXT <= idle; 
 				--------------------------------------------------------------------------------
@@ -330,7 +332,7 @@ BEGIN
 					we <= '1';
 					oe <= '1';
 					raddr <= "0000";
-					data <= (OTHERS => 'Z');
+					datai <= (OTHERS => 'Z');
 					
 					SRAM_NEXT <= idle;
 				--------------------------------------------------------------------------------	
@@ -345,4 +347,4 @@ BEGIN
 	--################################################################################
 				
 	
-END Behavioral; --eat pie
+END Behavioral; 
