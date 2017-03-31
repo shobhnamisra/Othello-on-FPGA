@@ -19,6 +19,7 @@ ENTITY main IS
 				--data 			: INOUT STD_LOGIC_VECTOR(1 DOWNTO 0) := (OTHERS => 'Z') --This is the bidirectional data bus to/from SRAM
 				datai			: OUT STD_LOGIC_VECTOR(1 DOWNTO 0) := (OTHERS => 'Z');
 				datao			: IN STD_LOGIC_VECTOR(1 DOWNTO 0)
+				
 		);
 				
 				
@@ -134,7 +135,7 @@ BEGIN
 							GAME_NEXT <= reset_all;
 							
 						ELSIF(button = '1') THEN
-							tempAddr <=  baddr; --store the pushed address
+							tempAddr <=   baddr; --store the pushed address
 							GAME_NEXT <= check_empty; --check the address once read
 							SRAM_NEXT <= r; --read the pushed address from SRAM
 							
@@ -147,22 +148,23 @@ BEGIN
 					--RESET_ALL CASE------------------------------------------------------------	
 					WHEN reset_all =>
 						SRAM_NEXT <= w; --Write to the box
-
-
+						
+						
 						--The address are -1 because it increments 1 at the end of this Case
 						CASE tempAddr IS
-							WHEN "0101" => --Initialize player 1's pieces
+							WHEN "0110" => --Initialize player 1's pieces
 								user <= "01";
 							WHEN "1011" => --Initialize player 1's pieces
 								user <= "01";								
 								
-							WHEN "0110" => --initialize player 2's pieces
+							WHEN "0111" => --initialize player 2's pieces
 								user <= "10";
 							WHEN "1010" => --initialize player 2's pieces
 								user <= "10";
 								
 							WHEN "1111" => --Quit condition: we have traveled through all the pieces
 								user <= "01";
+								
 								SRAM_NEXT <= idle;--lose
 								GAME_NEXT <= human_delay;
 								
@@ -263,6 +265,7 @@ BEGIN
 					WHEN human_delay => --Must wait until human has let go of button before contiuing
 						IF(button = '0' AND reset = '1' AND pass = '1') THEN
 							GAME_NEXT <= idle;
+							
 						END IF;
 					----------------------------------------------------------------------------
 					
@@ -288,7 +291,7 @@ BEGIN
 					we <= '1'; --turn off write enable
 					oe <= '1'; --turn off read enable
 					raddr <= tempAddr; --send the address
-					datao <= user; --send the data
+					datai <= user; --send the data
 					
 				--------------------------------------------------------------------------------
 				
@@ -317,7 +320,7 @@ BEGIN
 				
 				--R_END CASE--------------------------------------------------------------------
 				WHEN r_end =>
-					tempData <= datai; --get data from bus
+					tempData <= datao; --get data from bus
 					we <= '1'; --turn off write enable
 					oe <= '0'; --turn on output enable
 					raddr <= tempAddr; --keep sending address
