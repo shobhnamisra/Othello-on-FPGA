@@ -30,9 +30,7 @@ module xy_calculate(
 		 Y,
 		 enter
     );
-clk_gen(.inclk0(clk),
-         .c0(clk25));
-	 
+
 input clk;
 input RST;
 input east;
@@ -52,36 +50,35 @@ reg [0:0] enter;
  wire btn_pulse;
  assign btn_pulse = &Z;
  
- wire reset;
- assign reset= !RST;
+ 
  always @(posedge clk) begin
-	//if ( reset ) begin
-		//Z <= 0;
-		//X <= 0;
-		//Y <= 0;
-		//enter <= 0;
-	//end 
-	//else begin
+	if ( RST ) begin
+		Z <= 0;
+		X <= 0;
+		Y <= 0;
+		enter <= 0;
+	end 
+	else begin
 		Z <= Z + 1;
 		
 		if ( btn_pulse ) begin
-			if ( east==0 ) begin
+			if ( east ) begin
 				X <= X - 1;	
 			end
 			else
-			if ( west==0 ) begin
+			if ( west ) begin
 				X <= X + 1;	
 			end
 			else
-			if ( north==0 ) begin
+			if ( north ) begin
 				Y <= Y + 1;	
 			end
 			else
-			if ( south==0 ) begin
+			if ( south ) begin
 				Y <= Y - 1;	
 			end
 			else
-			if ( knob==0 ) begin
+			if ( knob ) begin
 				enter <= 1;
 			end
 			else begin
@@ -90,12 +87,12 @@ reg [0:0] enter;
 				enter <= 0;
 			end
 		end
-		//else begin
-			//X <= X;
-			//Y <= Y;
-			//enter <= 0;
-		//end
-	//end
+		else begin
+			X <= X;
+			Y <= Y;
+			enter <= 0;
+		end
+	end
  end
 
 endmodule

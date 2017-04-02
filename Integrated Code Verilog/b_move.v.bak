@@ -348,7 +348,7 @@ assign B = (player) ? R_ : B_;
 
 /* secvential logic */
 always  @(posedge clk) begin
-   if (RST==0) begin
+   if (RST) begin
 		/* prepare outputs */
 		R_OUT_Q <= R_;
 		B_OUT_Q <= B_;

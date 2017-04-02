@@ -44,7 +44,7 @@ parameter UP      = 3'd6;
 parameter UP45P   = 3'd7;
 
 always @(posedge clk) begin
-	if ( RST==0 ) begin
+	if ( RST ) begin
 		RES_Q <= 64'b0;
 	end
 	else begin

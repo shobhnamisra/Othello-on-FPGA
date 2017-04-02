@@ -92,7 +92,7 @@ always @( * ) begin
 end
 
 always @(posedge clk) begin
-	if ( RST ) begin
+	if ( RST==0 ) begin
 		cntB_q <= 0;
 		cntR_q <= 0;
 	end

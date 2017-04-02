@@ -357,7 +357,7 @@ CHAIN METHOD
 end
 
 always @(posedge clk) begin
-    if ( RST==0 ) begin
+    if ( RST ) begin
 	     value_q <= 20'b0;
 	 end
 	 else begin

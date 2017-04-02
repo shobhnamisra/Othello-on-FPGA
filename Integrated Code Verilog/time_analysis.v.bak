@@ -146,7 +146,7 @@ always @( * ) begin
 end
 
 always @(posedge clk) begin
-    if (RST==0) begin
+    if (RST) begin
 		data <= 0;
 		how_many_q <= 0;
 		busy_q <= 0;

@@ -35,7 +35,8 @@ module othello(
 	 output pass_led,			// player has to pass LED
 	 output gameover_led, 	// gameover LED
 	 output thinking_led, 	// thinking LED
-	 output TxD					// RS232 Tx
+	 output TxD,					// RS232 Tx
+	 output entercheck
     );
 
  
@@ -121,7 +122,7 @@ module othello(
  
  wire clk25;
 
-
+assign entercheck=enter_btn;
 
  parameter HUMAN            = 4'b0000;
  parameter HUMAN_MOVE		 = 4'b0001;	
@@ -136,6 +137,7 @@ module othello(
  
  
  assign pass = (M[63:0] == 64'h0);
+ //assign pass = 0;
  assign pass_led = pass;
  assign gameover = ( ai_pass && pass );//~(board_R_q | board_B_q) == 64'b0);
  assign gameover_led = gameover;
@@ -157,7 +159,7 @@ module othello(
 				  .player(pl_q) 
 				  );
  
- b_move bm   (.clk(clk25), 
+ b_move bm   (.clk(clk), 
 				  .RST(RST), 
 				  .B_(bmove_in_Bw), 
 				  .R_(bmove_in_Rw), 
@@ -224,8 +226,7 @@ module othello(
 								 .coordY(Y)
 								);
 
-clk_gen(.inclk0(clk),
-         .c0(clk25));								
+								
 
  always @( * ) 
  begin
@@ -363,7 +364,7 @@ clk_gen(.inclk0(clk),
 
  always @(posedge clk) 
  begin
-	if ( RST ) begin
+	if ( RST==0 ) begin
 		state_q   <= HUMAN;
 		pl_q      <= 1'b0;
 		move_x_q  <= 3'b0;

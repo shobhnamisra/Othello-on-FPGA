@@ -924,7 +924,7 @@ end
 */
 // clocked process
 always @(posedge clk) begin
-	if ( RST==0 ) begin
+	if ( RST ) begin
 		state_q <= RESET;
 		done_q  <= 0;
 		sp_q    <= 0;
