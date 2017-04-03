@@ -1,5 +1,24 @@
 `timescale 1ns / 1ps
-
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    23:08:07 05/13/2009 
+// Design Name:    glue logic for othello game.
+// Module Name:    othello 
+// Project Name:   The FPGA Othello Game
+// Target Devices: Spartan3E
+// Tool versions: 
+// Description: 
+//
+// Dependencies: all
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//     Marius TIVADAR
+//
+//////////////////////////////////////////////////////////////////////////////////
 module othello(
     input  clk,				// global clock
     input  RST,				// global RESET
@@ -118,6 +137,7 @@ assign entercheck=enter_btn;
  
  
  assign pass = (M[63:0] == 64'h0);
+ //assign pass = 0;
  assign pass_led = pass;
  assign gameover = ( ai_pass && pass );//~(board_R_q | board_B_q) == 64'b0);
  assign gameover_led = gameover;
@@ -289,7 +309,11 @@ assign entercheck=enter_btn;
 							  end
 				
 		START_AI: begin
-		            
+		            // board_R_q, board_B_q  au noile valori
+						// move_q_x,y  au valorile ok
+						// pl_q = oponent
+						// go_q = 1
+						// bmove e conectat la game_ai
 						state_d = AI;
 						time_cnt_d = 32'b0;
 						think_time_d = 32'b0;
@@ -304,11 +328,13 @@ assign entercheck=enter_btn;
 					move_x_d = gai_out_best_x;
 					move_y_d = gai_out_best_y;
 					state_d  = MOVE_BEST_WAIT;
+					//time_cnt_d = dbg_w;
 					// aquire nodes
 					time_cnt_d = dbg_node_cnt_w;
 				end 
 				else begin
 					state_d = AI;
+					//time_cnt_d = time_cnt_q + 1;
 					// thinking time
 					think_time_d = think_time_q + 1;
 					
@@ -323,7 +349,7 @@ assign entercheck=enter_btn;
 								state_d   = MOVE_BEST;
 							 end
 		MOVE_BEST:	begin
-			
+							// am mutat
 							board_R_d = bmove_out_Rw;
 							board_B_d = bmove_out_Bw;
 							
@@ -350,10 +376,12 @@ assign entercheck=enter_btn;
 		
 		board_R_q <= 64'b00000000_00000000_00000000_00010000_00001000_00000000_00000000_00000000;
 		board_B_q <= 64'b00000000_00000000_00000000_00001000_00010000_00000000_00000000_00000000;
-	
+//		board_R_q <= 64'b00000111_00000011_00000001_00000011_00001001_00100001_00110011_01111111;
+//		board_B_q <= 64'b00001000_00001100_00011110_01111100_01110110_00011110_00001100_00000000;	
 
 	end
 	else begin
+		//time_cnt_q <= 32'b0010_0000_1010_1110_1000_1111_1010_0001;//time_cnt_d;
 		time_cnt_q <= time_cnt_d;
 		nodes_sent_q <= nodes_sent_d;
 		think_time_q <= think_time_d;

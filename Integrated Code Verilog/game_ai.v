@@ -1,5 +1,24 @@
 `timescale 1ns / 1ps
-
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    18:55:11 04/23/2009 
+// Design Name: 
+// Module Name:    game_ai 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+// Marius TIVADAR.
+//
+//////////////////////////////////////////////////////////////////////////////////
 module game_ai( clk, RST, go, init_red, init_blue, red_in, blue_in, n_red, n_blue, ok_move, o_pl, done, m_x, m_y, bestX, bestY, M_wq , fake_state, M_wram, dbg_DATA_w, dbg_max_p_q, dbg_DATA_q, thinking, ai_pass, dbg_heur, dbg_node_cnt);
 input clk;
 input RST;
@@ -134,6 +153,10 @@ wire [0:0]          first_explore_w;
  reg [0:0]          first_explore_q;
 
 
+//reg [10:0] min_d;
+//reg [10:0] max_d;
+//reg [10:0] min_q;
+//reg [10:0] max_q;
 
 //reg [10:0] min_p_d;
 reg signed [HEUR_WIDTH:0] max_p_d;
@@ -283,6 +306,10 @@ always @( * )
 				 end
 		EXPLORE_M: begin
 		
+						// aici trebuie sa avem pe M_q completat cu harta corespunzatoare tablei curente
+						// gen by game_ai.py
+						//X_d = 0;
+						//Y_d = 0;
 						state_d = EXPLORE_M2;
 						fake_state_d = EXPLORE_M2;
 						
